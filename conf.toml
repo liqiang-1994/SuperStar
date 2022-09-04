@@ -1,0 +1,6 @@
+[mysql]
+url      = "127.0.0.1"
+DBName   = "super_star"
+Port     = 3306
+UserName = "super_star"
+Password = "super_star"

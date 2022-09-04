@@ -1,17 +1,20 @@
 package main
 
 import (
+	"SuperStar/database"
+	"SuperStar/models"
 	"SuperStar/routes"
-	"encoding/json"
-	"fmt"
+	"github.com/BurntSushi/toml"
 	"log"
 )
 
 func main() {
-
+	var config models.Config
+	if _, err := toml.DecodeFile("conf.toml", &config); err != nil {
+		panic(err)
+	}
+	database.ConnectDB(&config)
 	app := routes.New()
 
-	data, _ := json.MarshalIndent(app.Stack(), "", "  ")
-	fmt.Println(string(data))
 	log.Fatal(app.Listen(":3000"))
 }
