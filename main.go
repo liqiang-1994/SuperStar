@@ -1,20 +1,42 @@
 package main
 
 import (
-	"SuperStar/database"
-	"SuperStar/models"
-	"SuperStar/routes"
-	"github.com/BurntSushi/toml"
+	"SuperStar/internal/config"
+	"github.com/gofiber/fiber/v2"
 	"log"
 )
 
+type App struct {
+	config *config.Config
+	app    *fiber.App
+}
+
+func NewApp(conf *config.Config, app *fiber.App) *App {
+	//ctx, cancel := context.WithCancel(context.Background())
+	return &App{
+		config: conf,
+		app:    app,
+	}
+}
+
+//func newHttpServer(
+//	conf *config.Config,
+//	router *fiber.App,
+//) *http.Server {
+//	return &http.Server{
+//		Addr:    ":" + conf.App.Port,
+//		Handler: router,
+//	}
+//}
+
 func main() {
-	var config models.Config
-	if _, err := toml.DecodeFile("conf.toml", &config); err != nil {
+	app, cleanup, err := InitApp()
+	if err != nil {
 		panic(err)
 	}
-	database.ConnectDB(&config)
-	app := routes.New()
+	defer cleanup()
 
-	log.Fatal(app.Listen(":3000"))
+	//app := routes.NewRoute()
+
+	log.Fatal(app.app.Listen(":3000"))
 }

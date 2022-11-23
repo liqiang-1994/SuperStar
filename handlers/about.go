@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"SuperStar/models"
+	"SuperStar/docs/common"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,9 +16,10 @@ import (
 // @Router /api/v1/users/{id} [get]
 func GetAboutByID(c *fiber.Ctx) error {
 	id := c.Params("id")
-	return c.JSON(models.ResponseModel{
+	return c.JSON(common.ResponseModel{
 		Success: true,
 		Message: "Success",
 		Data:    id,
+		Status:  fiber.StatusOK,
 	})
 }
