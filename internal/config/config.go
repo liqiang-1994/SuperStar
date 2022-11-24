@@ -8,7 +8,9 @@ import (
 var Provider = wire.NewSet(NewCfg)
 
 type Config struct {
-	DB pg `toml:"postgres"`
+	DB    pg    `toml:"postgres"`
+	Redis redis `toml:"redis"`
+	Minio minio `toml:"minio"`
 }
 type pg struct {
 	Url      string
@@ -16,6 +18,20 @@ type pg struct {
 	Port     int
 	UserName string
 	Password string
+}
+
+type redis struct {
+	Url      string
+	Port     int
+	Password string
+	DB       int
+}
+
+type minio struct {
+	Url             string
+	AccessKeyID     string
+	SecretAccessKey string
+	BucketName      string
 }
 
 func NewCfg() (*Config, error) {

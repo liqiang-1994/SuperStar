@@ -4,4 +4,4 @@ import (
 	"github.com/google/wire"
 )
 
-var Provider = wire.NewSet(NewDB, NewTransaction, NewDBData, NewAccountRepo)
+var Provider = wire.NewSet(NewDB, NewRedis, NewMinio, NewTransaction, NewDBData, NewAccountRepo)

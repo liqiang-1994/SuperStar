@@ -6,12 +6,12 @@ import (
 	"context"
 )
 
-func NewAccountRepo(db *DBData) services.AccountRepo {
+func NewAccountRepo(db *Data) services.AccountRepo {
 	return &accountRepo{db: db}
 }
 
 type accountRepo struct {
-	db *DBData
+	db *Data
 }
 
 func (a *accountRepo) CreateUser(ctx context.Context, u *entity.TAccount) (int64, error) {

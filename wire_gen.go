@@ -22,12 +22,14 @@ func InitApp() (*App, func(), error) {
 		return nil, nil, err
 	}
 	db := repos.NewDB(configConfig)
-	dbData, cleanup, err := repos.NewDBData(db)
+	client := repos.NewRedis(configConfig)
+	minioClient := repos.NewMinio(configConfig)
+	data, cleanup, err := repos.NewDBData(db, client, minioClient)
 	if err != nil {
 		return nil, nil, err
 	}
-	accountRepo := repos.NewAccountRepo(dbData)
-	transaction := repos.NewTransaction(dbData)
+	accountRepo := repos.NewAccountRepo(data)
+	transaction := repos.NewTransaction(data)
 	accountService := services.NewAccountService(accountRepo, transaction)
 	accountHandler := handlers.NewAccountHandler(accountService)
 	app := routes.NewRoute(accountHandler)
