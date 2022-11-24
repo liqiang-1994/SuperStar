@@ -1,6 +1,18 @@
-[mysql]
+[postgres]
 url      = "127.0.0.1"
-DBName   = "super_star"
-Port     = 3306
-UserName = "super_star"
-Password = "super_star"
+DBName   = "db"
+Port     = 5432
+UserName = "root"
+Password = "pass"
+
+[redis]
+url      = "127.0.0.1"
+Port     = 6379
+Password = "pass"
+DB       = 0
+
+[minio]
+Url = "127.0.0.1:9000"
+AccessKeyID = "user"
+SecretAccessKey = "pass"
+BucketName = "superstar"
