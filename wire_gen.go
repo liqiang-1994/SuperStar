@@ -9,8 +9,10 @@ package main
 import (
 	"SuperStar/handlers"
 	"SuperStar/internal/config"
+	"SuperStar/internal/middlemare"
 	"SuperStar/internal/repos"
 	"SuperStar/internal/services"
+	"SuperStar/internal/utils"
 	"SuperStar/routes"
 )
 
@@ -24,15 +26,35 @@ func InitApp() (*App, func(), error) {
 	db := repos.NewDB(configConfig)
 	client := repos.NewRedis(configConfig)
 	minioClient := repos.NewMinio(configConfig)
-	data, cleanup, err := repos.NewDBData(db, client, minioClient)
+	v20190711Client := utils.NewSmsClient(configConfig)
+	node := repos.NewGID()
+	data, cleanup, err := repos.NewDBData(db, client, minioClient, v20190711Client, node)
 	if err != nil {
 		return nil, nil, err
 	}
 	accountRepo := repos.NewAccountRepo(data)
 	transaction := repos.NewTransaction(data)
-	accountService := services.NewAccountService(accountRepo, transaction)
-	accountHandler := handlers.NewAccountHandler(accountService)
-	app := routes.NewRoute(accountHandler)
+	accountService := services.NewAccountService(accountRepo, transaction, client, configConfig)
+	accountHandler := handlers.NewAccountHandler(accountService, configConfig)
+	loginHandler := handlers.NewLoginHandler(accountService)
+	poetRepo := repos.NewPoetRepo(data)
+	poetService := services.NewPoetService(poetRepo, transaction, client, configConfig)
+	poetryRepo := repos.NewPoetryRepo(data)
+	poetryService := services.NewPoetryService(poetryRepo, transaction, client, configConfig)
+	idiomRepo := repos.NewIdiomRepo(data)
+	idiomService := services.NewIdiomService(idiomRepo, transaction, client, configConfig)
+	sayingRepo := repos.NewSayingRepo(data)
+	sayingService := services.NewSayingService(sayingRepo, transaction, client, configConfig)
+	poemHandler := handlers.NewPoemHandler(poetService, poetryService, idiomService, sayingService)
+	tagRepo := repos.NewTagRepo(data)
+	tagService := services.NewTagService(tagRepo, transaction)
+	tagHandler := handlers.NewTagHandler(tagService, configConfig)
+	circleRepo := repos.NewCircleRepo(data)
+	circleService := services.NewCircleService(circleRepo, transaction, node)
+	circleHandler := handlers.NewCircleHandler(circleService, configConfig)
+	storageHandler := handlers.NewStorageHandler()
+	jwtMiddleware := middlemare.NewMiddleware(db, configConfig)
+	app := routes.NewRoute(accountHandler, loginHandler, poemHandler, tagHandler, circleHandler, storageHandler, jwtMiddleware)
 	mainApp := NewApp(configConfig, app)
 	return mainApp, func() {
 		cleanup()

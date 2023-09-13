@@ -1,77 +1,42 @@
 package handlers
 
 import (
-	"SuperStar/docs/common"
-	"SuperStar/internal/entity"
+	"SuperStar/common"
+	"SuperStar/internal/config"
+	"SuperStar/internal/middlemare"
 	"SuperStar/internal/services"
-	"context"
 	"github.com/gofiber/fiber/v2"
-	"net/http"
+	"strconv"
 )
 
 type AccountHandler struct {
 	accountSrv *services.AccountService
+	cfg        *config.Config
 }
 
-func NewAccountHandler(accountService *services.AccountService) *AccountHandler {
-	return &AccountHandler{accountSrv: accountService}
+func NewAccountHandler(accountService *services.AccountService, cfg *config.Config) *AccountHandler {
+	return &AccountHandler{accountSrv: accountService, cfg: cfg}
 }
 
-func (s *AccountHandler) CreateAccount() fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		var req entity.Account
-		err := c.BodyParser(&req)
-		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			var resp = common.Fail(err)
-			return c.JSON(resp)
-		}
-		customContext, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		result, err := s.accountSrv.CreateAccount(customContext, &req)
-		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			var resp = common.Fail(err)
-			return c.JSON(resp)
-		}
-		return c.JSON(result)
+// account 个人主页
+// @Summary 个人主页
+// @Description 个人主页
+// @Tags account
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Router /api/account/{id} [get]
+func (s *AccountHandler) GetUserByID(c *fiber.Ctx) error {
+	uid := c.Params("id")
+	user := middlemare.ExtractTokenMetadata(c, s.cfg)
+	self := false
+	id, err := strconv.ParseInt(uid, 10, 64)
+	if err != nil && user != nil && user.Id == id {
+		self = true
 	}
+	result, err := s.accountSrv.Personal(c.UserContext(), uid, self)
+	if err != nil {
+		return c.JSON(common.Fail(err))
+	}
+	return c.JSON(common.Success(result))
 }
-
-//// GetUserByID 根据id获取个人信息
-//// @Summary 根据id获取个人信息
-//// @Description 根据id获取个人信息
-//// @Tags about
-//// @Accept json
-//// @Produce json
-//// @Param id path int true "User ID"
-//// @Success 200 {object} models.ResponseModel{data=[]models.Account}
-//// @Router /api/v1/users/{id} [get]
-//func GetUserByID(c *fiber.Ctx) error {
-//	id := c.Params("id")
-//	return c.JSON(common.ResponseModel{
-//		Success: true,
-//		Message: "Success",
-//		Data:    id,
-//		Status:  fiber.StatusOK,
-//	})
-//}
-//
-//// ExistUserName 是否存在该昵称
-//// @Summary 是否存在该昵称
-//// @Description 是否存在该昵称
-//// @Tags about
-//// @Accept json
-//// @Produce json
-//// @Param userName path string true "Username"
-//// @Success 200 {object} models.ResponseModel{data=[]models.Account}
-//// @Router /api/v1/account/{userName} [get]
-//func ExistUserName(c *fiber.Ctx) error {
-//	id := c.Params("userName")
-//	return c.JSON(common.ResponseModel{
-//		Success: true,
-//		Message: "Success",
-//		Data:    id,
-//		Status:  fiber.StatusOK,
-//	})
-//}

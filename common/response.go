@@ -15,3 +15,21 @@ func Fail(err error) *ResponseModel {
 		Message: err.Error(),
 	}
 }
+
+func Success(data interface{}) *ResponseModel {
+	return &ResponseModel{
+		Success: true,
+		Data:    data,
+		Message: "Success",
+		Status:  http.StatusOK,
+	}
+}
+
+func NotLogin(message string) *ResponseModel {
+	return &ResponseModel{
+		Success: false,
+		Data:    nil,
+		Message: message,
+		Status:  http.StatusUnauthorized,
+	}
+}

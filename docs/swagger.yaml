@@ -1,27 +1,19 @@
-definitions:
-  models.ResponseModel:
-    properties:
-      data: {}
-      message:
-        type: string
-      success:
-        type: boolean
-    type: object
-  models.User:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
 info:
-  contact: {}
+  contact:
+    email: luxyva@outlook.com
+    name: API Support
+  description: This is an auto-generated API Docs for SuperStar.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: API
+  version: "1.0"
 paths:
-  /api/v1/users/{id}:
+  /api/account/{id}:
     get:
       consumes:
       - application/json
-      description: 根据id获取个人主页
+      description: 个人主页
       parameters:
       - description: User ID
         in: path
@@ -30,19 +22,198 @@ paths:
         type: integer
       produces:
       - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ResponseModel'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/models.User'
-                  type: array
-              type: object
-      summary: 根据id获取个人主页
+      responses: {}
+      summary: 个人主页
       tags:
-      - about
+      - account
+  /api/circle/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 查询圈子详情
+      parameters:
+      - description: Circle ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 查询圈子详情
+      tags:
+      - circle
+  /api/circle/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建圈子
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 创建圈子
+      tags:
+      - circle
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: 登录
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      summary: 登录
+      tags:
+      - login
+  /api/poem/list:
+    post:
+      consumes:
+      - application/json
+      description: 诗集首页列表
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 诗集首页列表
+      tags:
+      - poem
+  /api/sendSms:
+    post:
+      consumes:
+      - application/json
+      description: 发送短信验证码
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      summary: 发送短信验证码
+      tags:
+      - login
+  /api/storage/avatar/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传头像
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses: {}
+      summary: 上传头像
+      tags:
+      - storage
+  /api/storage/download:
+    get:
+      description: 下载文件
+      parameters:
+      - description: file name
+        in: query
+        name: filename
+        required: true
+        type: string
+      responses: {}
+      summary: 下载文件
+      tags:
+      - storage
+  /api/tag/all:
+    post:
+      consumes:
+      - application/json
+      description: 查询标签列表
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 查询标签列表
+      tags:
+      - tag
+  /api/tag/create:
+    post:
+      consumes:
+      - application/json
+      description: 新建标签
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 新建标签
+      tags:
+      - tag
+  /api/tag/createTagRel:
+    post:
+      consumes:
+      - application/json
+      description: 新建标签关系
+      parameters:
+      - description: param
+        in: body
+        name: param
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 新建标签关系
+      tags:
+      - tag
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

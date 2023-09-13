@@ -11,6 +11,8 @@ type Config struct {
 	DB    pg    `toml:"postgres"`
 	Redis redis `toml:"redis"`
 	Minio minio `toml:"minio"`
+	Sms   sms   `toml:"sms"`
+	Auth  auth  `toml:"auth"`
 }
 type pg struct {
 	Url      string
@@ -32,6 +34,18 @@ type minio struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	BucketName      string
+}
+
+type sms struct {
+	SecretId   string
+	SecretKey  string
+	AppId      string
+	Sign       string
+	TemplateId string
+}
+
+type auth struct {
+	SecretKey string
 }
 
 func NewCfg() (*Config, error) {

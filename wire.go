@@ -6,6 +6,7 @@ package main
 import (
 	"SuperStar/handlers"
 	"SuperStar/internal/config"
+	"SuperStar/internal/middlemare"
 	"SuperStar/internal/repos"
 	"SuperStar/internal/services"
 	"SuperStar/routes"
@@ -13,5 +14,5 @@ import (
 )
 
 func InitApp() (*App, func(), error) {
-	panic(wire.Build(config.Provider, repos.Provider, services.Provider, handlers.Provider, routes.Provider, NewApp))
+	panic(wire.Build(config.Provider, repos.Provider, services.Provider, handlers.Provider, routes.Provider, middlemare.Provider, NewApp))
 }
